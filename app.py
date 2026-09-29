@@ -55,7 +55,8 @@ def generate():
         if not GEMINI_API_KEY:
             return jsonify({"error": "Gemini API Key is missing in Vercel settings!"}), 500
 
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Updated model name to gemini-2.5-flash
+        model = genai.GenerativeModel('gemini-2.5-flash')
         prompt = f"""
         You are an expert YouTube Shorts and TikTok content strategist.
         Analyze or create a strategy for this video content:

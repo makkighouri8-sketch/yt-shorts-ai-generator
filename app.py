@@ -16,7 +16,6 @@ def detect_platform_and_id(url):
     if not url:
         return None, None
     
-    # YouTube Check
     yt_patterns = [
         r"(?:v=|\/)([0-9A-Za-z_-]{11}).*",
         r"youtu\.be\/([0-9A-Za-z_-]{11})",
@@ -27,11 +26,9 @@ def detect_platform_and_id(url):
         if match:
             return "YouTube", match.group(1)
             
-    # TikTok Check
     if "tiktok.com" in url.lower():
         return "TikTok", url
         
-    # Instagram Check
     if "instagram.com" in url.lower():
         return "Instagram", url
 
@@ -45,6 +42,7 @@ def index():
 def generate():
     data = request.get_json()
     video_url = data.get("url", "").strip()
+    language = data.get("language", "English")
 
     if not video_url:
         return jsonify({"error": "Please provide a valid video URL"}), 400
@@ -53,7 +51,6 @@ def generate():
 
     full_transcript = f"Platform: {platform} | Content Source: {identifier}"
 
-    # Try fetching YouTube transcript if it's a YouTube video
     if platform == "YouTube":
         try:
             transcript_list = YouTubeTranscriptApi.get_transcript(identifier)
@@ -73,6 +70,9 @@ def generate():
         You are a top-tier viral content strategist specializing in YouTube Shorts, TikTok, and Instagram Reels.
         Analyze or construct a viral content blueprint for this link/content:
         {full_transcript}
+
+        IMPORTANT: Output ALL the content, scripts, hooks, summaries, and captions in **{language}** language.
+        If language is Urdu, write in clean Urdu (Roman Urdu or Urdu script).
 
         Provide 3 viral Short Clip ideas with:
         1. **Clip Title & Topic**

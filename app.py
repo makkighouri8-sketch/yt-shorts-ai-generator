@@ -12,10 +12,19 @@ if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
 def extract_video_id(url):
-    """Extract YouTube Video ID from various URL formats."""
-    regex = r"(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})"
-    match = re.search(regex, url)
-    return match.group(1) if match else None
+    """Extract YouTube Video ID from any URL format."""
+    if not url:
+        return None
+    patterns = [
+        r"(?:v=|\/)([0-9A-Za-z_-]{11}).*",
+        r"youtu\.be\/([0-9A-Za-z_-]{11})",
+        r"youtube\.com\/shorts\/([0-9A-Za-z_-]{11})"
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
 
 @app.route("/")
 def index():
@@ -24,10 +33,10 @@ def index():
 @app.route("/generate", methods=["POST"])
 def generate():
     data = request.get_json()
-    video_url = data.get("url")
+    video_url = data.get("url", "").strip()
 
     if not video_url:
-        return jsonify({"error": "Please provide a valid YouTube URL"}), 400
+        return jsonify({"error": "Please provide a YouTube URL"}), 400
 
     video_id = extract_video_id(video_url)
     if not video_id:
@@ -64,8 +73,8 @@ def generate():
         return jsonify({"result": response.text})
 
     except Exception as e:
-        return jsonify({"error": f"Failed to process video: {str(e)}"}), 500
+        return jsonify({"error": f"Failed to process video (Make sure video has subtitles/CC enabled): {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
-  
+    

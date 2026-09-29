@@ -42,38 +42,40 @@ def generate():
     if not video_id:
         return jsonify({"error": "Invalid YouTube URL format"}), 400
 
+    full_transcript = ""
     try:
-        # Fetch transcript
+        # Attempt to fetch transcript
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-        full_transcript = " ".join([item['text'] for item in transcript_list])
-        
-        # Limit transcript length if too long
-        full_transcript = full_transcript[:10000]
+        full_transcript = " ".join([item['text'] for item in transcript_list])[:10000]
+    except Exception:
+        # Fallback if transcript fails or is disabled/blocked by YouTube IP rate limits
+        full_transcript = f"Video ID: {video_id}. (Direct transcript fetching unavailable. Generate a viral Shorts content structure and script strategy based on this video link)."
 
-        # Call Gemini AI
+    try:
+        if not GEMINI_API_KEY:
+            return jsonify({"error": "Gemini API Key is missing in Vercel settings!"}), 500
+
         model = genai.GenerativeModel('gemini-1.5-flash')
         prompt = f"""
         You are an expert YouTube Shorts and TikTok content strategist.
-        Analyze the following transcript from a video and extract 3 viral Short Clip ideas.
-
-        Transcript:
+        Analyze or create a strategy for this video content:
         {full_transcript}
 
-        For each of the 3 clips, provide:
+        Provide 3 viral Short Clip ideas with:
         1. **Clip Title & Topic**
         2. **Estimated Timestamp Range** (e.g., 01:15 - 02:00)
         3. **Viral Hook** (First 3-5 seconds dialogue to catch attention)
         4. **Short Script / Core Summary**
         5. **TikTok/Reels Caption with Hashtags**
 
-        Format the output cleanly using Markdown with clear headers and bullet points.
+        Format cleanly in Markdown.
         """
 
         response = model.generate_content(prompt)
         return jsonify({"result": response.text})
 
     except Exception as e:
-        return jsonify({"error": f"Failed to process video (Make sure video has subtitles/CC enabled): {str(e)}"}), 500
+        return jsonify({"error": f"AI Processing Error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -11,20 +11,31 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
-def extract_video_id(url):
-    """Extract YouTube Video ID from any URL format."""
+def detect_platform_and_id(url):
+    """Detect platform (YouTube, TikTok, Instagram) and extract content ID/link."""
     if not url:
-        return None
-    patterns = [
+        return None, None
+    
+    # YouTube Check
+    yt_patterns = [
         r"(?:v=|\/)([0-9A-Za-z_-]{11}).*",
         r"youtu\.be\/([0-9A-Za-z_-]{11})",
         r"youtube\.com\/shorts\/([0-9A-Za-z_-]{11})"
     ]
-    for pattern in patterns:
+    for pattern in yt_patterns:
         match = re.search(pattern, url)
         if match:
-            return match.group(1)
-    return None
+            return "YouTube", match.group(1)
+            
+    # TikTok Check
+    if "tiktok.com" in url.lower():
+        return "TikTok", url
+        
+    # Instagram Check
+    if "instagram.com" in url.lower():
+        return "Instagram", url
+
+    return "General Video Link", url
 
 @app.route("/")
 def index():
@@ -36,40 +47,41 @@ def generate():
     video_url = data.get("url", "").strip()
 
     if not video_url:
-        return jsonify({"error": "Please provide a YouTube URL"}), 400
+        return jsonify({"error": "Please provide a valid video URL"}), 400
 
-    video_id = extract_video_id(video_url)
-    if not video_id:
-        return jsonify({"error": "Invalid YouTube URL format"}), 400
+    platform, identifier = detect_platform_and_id(video_url)
 
-    full_transcript = ""
-    try:
-        # Attempt to fetch transcript
-        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-        full_transcript = " ".join([item['text'] for item in transcript_list])[:10000]
-    except Exception:
-        # Fallback if transcript fails or is disabled/blocked by YouTube IP rate limits
-        full_transcript = f"Video ID: {video_id}. (Direct transcript fetching unavailable. Generate a viral Shorts content structure and script strategy based on this video link)."
+    full_transcript = f"Platform: {platform} | Content Source: {identifier}"
+
+    # Try fetching YouTube transcript if it's a YouTube video
+    if platform == "YouTube":
+        try:
+            transcript_list = YouTubeTranscriptApi.get_transcript(identifier)
+            fetched_text = " ".join([item['text'] for item in transcript_list])[:10000]
+            if fetched_text:
+                full_transcript += f"\nVideo Transcript: {fetched_text}"
+        except Exception:
+            full_transcript += "\n(Direct transcript unavailable, analyzing video context based on link structure)."
 
     try:
         if not GEMINI_API_KEY:
             return jsonify({"error": "Gemini API Key is missing in Vercel settings!"}), 500
 
-        # Updated model name to gemini-2.5-flash
         model = genai.GenerativeModel('gemini-2.5-flash')
+        
         prompt = f"""
-        You are an expert YouTube Shorts and TikTok content strategist.
-        Analyze or create a strategy for this video content:
+        You are a top-tier viral content strategist specializing in YouTube Shorts, TikTok, and Instagram Reels.
+        Analyze or construct a viral content blueprint for this link/content:
         {full_transcript}
 
         Provide 3 viral Short Clip ideas with:
         1. **Clip Title & Topic**
-        2. **Estimated Timestamp Range** (e.g., 01:15 - 02:00)
-        3. **Viral Hook** (First 3-5 seconds dialogue to catch attention)
+        2. **Estimated Timestamp / Duration**
+        3. **Viral Hook** (First 3-5 seconds dialogue/visual to stop the scroll)
         4. **Short Script / Core Summary**
-        5. **TikTok/Reels Caption with Hashtags**
+        5. **Viral Captions with Trending Hashtags** (For TikTok, Reels, & Shorts)
 
-        Format cleanly in Markdown.
+        Format cleanly in Markdown with emojis.
         """
 
         response = model.generate_content(prompt)

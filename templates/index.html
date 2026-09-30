@@ -6,6 +6,8 @@
     <title>Viral Shorts AI - Long Video to Shorts Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- jsPDF Library for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-gray-950 text-white min-h-screen flex flex-col justify-between font-sans selection:bg-purple-500 selection:text-white">
 
@@ -57,14 +59,15 @@
             <div class="flex flex-wrap justify-between items-center gap-2 mb-4 pb-3 border-b border-gray-800">
                 <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">🔥 Viral Strategy & Scripts</h3>
                 <div class="flex items-center gap-2">
-                    <button onclick="copyResult()" class="text-xs bg-gray-800 border border-gray-700 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-gray-200 transition">📋 Copy All</button>
-                    <button onclick="downloadResult()" class="text-xs bg-purple-900/50 border border-purple-700 hover:bg-purple-800/50 px-3 py-1.5 rounded-lg text-purple-200 transition">📥 Download TXT</button>
+                    <button onclick="copyResult()" class="text-xs bg-gray-800 border border-gray-700 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-gray-200 transition">📋 Copy</button>
+                    <button onclick="downloadTXT()" class="text-xs bg-gray-800 border border-gray-700 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-gray-200 transition">📥 TXT</button>
+                    <button onclick="downloadPDF()" class="text-xs bg-purple-900/60 border border-purple-700 hover:bg-purple-800/60 px-3 py-1.5 rounded-lg text-purple-200 transition">📄 Download PDF</button>
                 </div>
             </div>
             <div id="resultContent" class="text-gray-300 text-sm space-y-4 leading-relaxed"></div>
         </div>
 
-        <!-- SaaS Monetization Preview Section (For Flippa Value) -->
+        <!-- SaaS Monetization Preview Section -->
         <div class="mt-12 border-t border-gray-800 pt-8">
             <h3 class="text-center text-sm font-semibold uppercase tracking-wider text-gray-400 mb-6">Flexible SaaS Pricing Plans</h3>
             <div class="grid md:grid-cols-2 gap-4">
@@ -85,7 +88,7 @@
                     <ul class="text-xs text-gray-300 space-y-1.5 my-4">
                         <li>✔ Unlimited Video Processing</li>
                         <li>✔ Multi-language Deep Analysis</li>
-                        <li>✔ Export Strategy Reports</li>
+                        <li>✔ Export Strategy Reports (PDF & TXT)</li>
                         <li>✔ Priority Gemini API Speed</li>
                     </ul>
                     <button class="w-full text-xs bg-purple-600 hover:bg-purple-500 py-2 rounded-lg text-white font-semibold transition">Upgrade to Pro</button>
@@ -150,13 +153,31 @@
             alert("Viral strategy copied to clipboard!");
         }
 
-        function downloadResult() {
+        function downloadTXT() {
             const text = document.getElementById("resultContent").innerText;
             const blob = new Blob([text], { type: 'text/plain' });
             const anchor = document.createElement('a');
             anchor.download = 'Viral_Shorts_Strategy.txt';
             anchor.href = window.URL.createObjectURL(blob);
             anchor.click();
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const text = document.getElementById("resultContent").innerText;
+            
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("Viral Shorts AI - Strategy Report", 10, 15);
+            
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            
+            const splitText = doc.splitTextToSize(text, 180);
+            doc.text(splitText, 10, 25);
+            
+            doc.save("Viral_Shorts_Strategy.pdf");
         }
     </script>
 </body>

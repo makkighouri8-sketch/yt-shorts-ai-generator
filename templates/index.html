@@ -8,6 +8,17 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- jsPDF Library for PDF Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- 3-Dots Thinking Bouncing Animation Style -->
+    <style>
+        @keyframes pulse-dots {
+            0%, 100% { opacity: 0.3; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-5px); }
+        }
+        .dot-1 { animation: pulse-dots 1.2s infinite 0s; }
+        .dot-2 { animation: pulse-dots 1.2s infinite 0.2s; }
+        .dot-3 { animation: pulse-dots 1.2s infinite 0.4s; }
+    </style>
 </head>
 <body class="bg-gray-950 text-white min-h-screen flex flex-col justify-between font-sans selection:bg-purple-500 selection:text-white">
 
@@ -91,7 +102,7 @@
                         <li>✔ Export Strategy Reports (PDF & TXT)</li>
                         <li>✔ Priority Gemini API Speed</li>
                     </ul>
-                    <button class="w-full text-xs bg-purple-600 hover:bg-purple-500 py-2 rounded-lg text-white font-semibold transition">Upgrade to Pro</button>
+                    <button onclick="alert('Checkout Ready: Payment Gateway can be configured via Stripe/LemonSqueezy upon project handover.')" class="w-full text-xs bg-purple-600 hover:bg-purple-500 py-2 rounded-lg text-white font-semibold transition">Upgrade to Pro</button>
                 </div>
             </div>
         </div>
@@ -119,7 +130,18 @@
             errorBox.classList.add("hidden");
             resultBox.classList.add("hidden");
             btn.disabled = true;
-            btn.innerText = "⏳ Extracting Viral Clips & Scripts...";
+
+            // 3-Dots Animated Thinking Button Message
+            btn.innerHTML = `
+                <div class="flex items-center gap-2 justify-center">
+                    <span>Generating Viral Blueprint</span>
+                    <div class="flex space-x-1 items-center ml-1">
+                        <div class="w-2 h-2 bg-white rounded-full dot-1"></div>
+                        <div class="w-2 h-2 bg-white rounded-full dot-2"></div>
+                        <div class="w-2 h-2 bg-white rounded-full dot-3"></div>
+                    </div>
+                </div>
+            `;
 
             try {
                 const response = await fetch("/generate", {

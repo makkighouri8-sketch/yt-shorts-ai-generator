@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Shorts & Viral AI Generator</title>
+    <title>Viral Shorts AI - Long Video to Shorts Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-<body class="bg-gray-950 text-white min-h-screen flex flex-col justify-between font-sans">
+<body class="bg-gray-950 text-white min-h-screen flex flex-col justify-between font-sans selection:bg-purple-500 selection:text-white">
 
     <!-- Header -->
-    <header class="p-4 border-b border-gray-800 flex justify-between items-center max-w-4xl mx-auto w-full">
-        <div class="flex items-center space-x-2">
-            <span class="text-red-500 text-2xl">▶</span>
-            <h1 class="text-xl font-bold tracking-wide">Viral Shorts AI</h1>
+    <header class="p-4 border-b border-gray-800 flex justify-between items-center max-w-5xl mx-auto w-full">
+        <div class="flex items-center space-x-3">
+            <span class="text-red-500 text-2xl font-bold">▶</span>
+            <h1 class="text-xl font-extrabold tracking-wide bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Viral Shorts AI Pro</h1>
         </div>
         
         <!-- Language Selector -->
         <div class="flex items-center space-x-2">
             <span class="text-sm text-gray-400">🌐</span>
-            <select id="languageSelect" class="bg-gray-800 text-white text-sm px-3 py-1.5 rounded-lg border border-gray-700 focus:outline-none focus:border-purple-500">
+            <select id="languageSelect" class="bg-gray-900 text-white text-xs sm:text-sm px-3 py-1.5 rounded-xl border border-gray-700 focus:outline-none focus:border-purple-500">
                 <option value="English" selected>English</option>
                 <option value="Urdu">Urdu (اردو)</option>
             </select>
@@ -27,24 +27,25 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-2xl mx-auto px-4 py-8 w-full flex-1">
+    <main class="max-w-3xl mx-auto px-4 py-8 w-full flex-1">
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-2">
+            <span class="bg-purple-900/40 border border-purple-500/30 text-purple-300 text-xs px-3 py-1 rounded-full uppercase tracking-widest font-semibold mb-3 inline-block">Micro-SaaS AI Tool</span>
+            <h2 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent mb-3">
                 Turn Long Videos into Viral Shorts
             </h2>
-            <p class="text-gray-400 text-sm">
-                Extract top clips, viral hooks, scripts & captions for YouTube, TikTok & Reels.
+            <p class="text-gray-400 text-sm sm:text-base">
+                Extract top clips, viral hooks, scripts & captions for YouTube, TikTok & Reels automatically.
             </p>
         </div>
 
         <!-- Input Form -->
-        <div class="bg-gray-900 border border-gray-800 p-4 rounded-2xl shadow-xl mb-6">
+        <div class="bg-gray-900/80 backdrop-blur-md border border-gray-800 p-5 rounded-2xl shadow-2xl mb-8">
             <input type="text" id="videoUrl" placeholder="Paste YouTube, TikTok or Instagram URL..." 
-                class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 text-white mb-3">
+                class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-purple-500 text-white mb-4 placeholder-gray-500">
             
             <button onclick="generateClips()" id="genBtn" 
-                class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-semibold py-3 rounded-xl transition duration-200 text-sm shadow-lg shadow-purple-950">
-                ✨ Generate Clips
+                class="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-500 hover:to-pink-500 font-bold py-3.5 rounded-xl transition duration-300 text-sm shadow-lg shadow-purple-950/50 flex justify-center items-center gap-2">
+                ✨ Generate Viral Strategy
             </button>
         </div>
 
@@ -52,17 +53,49 @@
         <div id="errorBox" class="hidden bg-red-950/80 border border-red-800 text-red-200 p-4 rounded-xl text-sm mb-6"></div>
 
         <!-- Result Box -->
-        <div id="resultBox" class="hidden bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">🔥 Viral Clip Ideas</h3>
-                <button onclick="copyResult()" class="text-xs bg-gray-800 border border-gray-700 hover:bg-gray-700 px-3 py-1.5 rounded-lg">📋 Copy All</button>
+        <div id="resultBox" class="hidden bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-2xl mb-12">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-4 pb-3 border-b border-gray-800">
+                <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">🔥 Viral Strategy & Scripts</h3>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyResult()" class="text-xs bg-gray-800 border border-gray-700 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-gray-200 transition">📋 Copy All</button>
+                    <button onclick="downloadResult()" class="text-xs bg-purple-900/50 border border-purple-700 hover:bg-purple-800/50 px-3 py-1.5 rounded-lg text-purple-200 transition">📥 Download TXT</button>
+                </div>
             </div>
             <div id="resultContent" class="text-gray-300 text-sm space-y-4 leading-relaxed"></div>
         </div>
+
+        <!-- SaaS Monetization Preview Section (For Flippa Value) -->
+        <div class="mt-12 border-t border-gray-800 pt-8">
+            <h3 class="text-center text-sm font-semibold uppercase tracking-wider text-gray-400 mb-6">Flexible SaaS Pricing Plans</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-gray-900/50 border border-gray-800 p-5 rounded-xl">
+                    <h4 class="font-bold text-gray-200">Free Starter</h4>
+                    <p class="text-2xl font-black my-2">$0 <span class="text-xs text-gray-500 font-normal">/month</span></p>
+                    <ul class="text-xs text-gray-400 space-y-1.5 my-4">
+                        <li>✔ Standard Video Analysis</li>
+                        <li>✔ English & Urdu Output</li>
+                        <li>✔ Basic Hooks & Scripts</li>
+                    </ul>
+                    <span class="block text-center text-xs bg-gray-800 py-2 rounded-lg text-gray-400 font-medium">Current Plan</span>
+                </div>
+                <div class="bg-gradient-to-b from-purple-950/40 to-gray-900/50 border border-purple-800/50 p-5 rounded-xl relative">
+                    <span class="absolute top-3 right-3 text-[10px] bg-purple-600 text-white font-bold px-2 py-0.5 rounded-full">POPULAR</span>
+                    <h4 class="font-bold text-purple-300">Pro Automator</h4>
+                    <p class="text-2xl font-black my-2">$19 <span class="text-xs text-gray-400 font-normal">/month</span></p>
+                    <ul class="text-xs text-gray-300 space-y-1.5 my-4">
+                        <li>✔ Unlimited Video Processing</li>
+                        <li>✔ Multi-language Deep Analysis</li>
+                        <li>✔ Export Strategy Reports</li>
+                        <li>✔ Priority Gemini API Speed</li>
+                    </ul>
+                    <button class="w-full text-xs bg-purple-600 hover:bg-purple-500 py-2 rounded-lg text-white font-semibold transition">Upgrade to Pro</button>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer class="text-center py-4 text-xs text-gray-600 border-t border-gray-900">
-        Powered by Flask & Gemini 2.5 Flash • Ready for Micro-SaaS
+    <footer class="text-center py-6 text-xs text-gray-600 border-t border-gray-900">
+        Viral Shorts AI • Built with Python, Flask & Gemini 2.5 • Ready for Micro-SaaS Transfer
     </footer>
 
     <script>
@@ -75,7 +108,7 @@
             const resultContent = document.getElementById("resultContent");
 
             if (!url) {
-                errorBox.innerText = "Please enter a valid video URL.";
+                errorBox.innerText = "Please enter a valid YouTube, TikTok, or Instagram URL.";
                 errorBox.classList.remove("hidden");
                 return;
             }
@@ -83,7 +116,7 @@
             errorBox.classList.add("hidden");
             resultBox.classList.add("hidden");
             btn.disabled = true;
-            btn.innerText = "⏳ Generating Viral Strategy...";
+            btn.innerText = "⏳ Extracting Viral Clips & Scripts...";
 
             try {
                 const response = await fetch("/generate", {
@@ -97,23 +130,33 @@
                 if (response.ok) {
                     resultContent.innerHTML = marked.parse(data.result);
                     resultBox.classList.remove("hidden");
+                    resultBox.scrollIntoView({ behavior: 'smooth' });
                 } else {
                     errorBox.innerText = data.error || "An error occurred.";
                     errorBox.classList.remove("hidden");
                 }
             } catch (err) {
-                errorBox.innerText = "Network error. Please try again.";
+                errorBox.innerText = "Network error or request timeout. Please try again.";
                 errorBox.classList.remove("hidden");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "✨ Generate Clips";
+                btn.innerText = "✨ Generate Viral Strategy";
             }
         }
 
         function copyResult() {
             const text = document.getElementById("resultContent").innerText;
             navigator.clipboard.writeText(text);
-            alert("Copied to clipboard!");
+            alert("Viral strategy copied to clipboard!");
+        }
+
+        function downloadResult() {
+            const text = document.getElementById("resultContent").innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.download = 'Viral_Shorts_Strategy.txt';
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.click();
         }
     </script>
 </body>
